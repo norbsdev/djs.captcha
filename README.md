@@ -50,4 +50,4 @@ Captcha.on('failure', (info) => {
 https://github.com/strange-glitch/djs.captcha
 
 # Discord Server
-<img src="https://discordapp.com/api/guilds/882743055516569610/widget.png?style=banner2"/>
+https://discord.gg/UNJmsEXu65
