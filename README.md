@@ -1,6 +1,17 @@
+#  djs.captcha 
+  <p>
+    <a href="https://www.npmjs.com/package/djs.captcha"><img src="https://img.shields.io/npm/v/djs.captcha?maxAge=3600" alt="NPM version" /></a>
+    <a href="https://www.npmjs.com/package/djs.captcha"><img src="https://img.shields.io/npm/dt/djs.captcha?maxAge=3600" alt="NPM downloads" /></a>
+    <a href="https://www.npmjs.com/package/djs.captcha"><img src="https://img.shields.io/snyk/vulnerabilities/npm/djs.captcha?color=success&label=package%20vulnerabilities&logo=snyk&logoColor=red?maxAge=3600" alt="djs.captcha" /></a>
+
+  </p>
+  <p>
+    <a href="https://www.npmjs.com/package/djs.captcha"><img src="https://nodei.co/npm/djs.captcha.png?downloads=true&stars=true" alt="NPM Banner"></a>
+  </p>
+
 # What is this?
 
-Have your users verify with a captcha using Discord Buttons.
+Have your users verify with a captcha using Discord Buttons on server join.
 
 # Installation
 
@@ -13,7 +24,7 @@ const Captcha = require('djs.captcha')
 const captcha = new Captcha(client, {
     roleID: 'Role ID Here',
     channelID: 'Text Channel ID Here',
-    removeRoleID: 'The role removed from users once verified'
+    onFail: 'kick or ban'
 });
 ```
 
@@ -26,7 +37,7 @@ const Captcha = require('djs.captcha')
 const captcha = new Captcha(client, {
     roleID: 'Role ID Here',
     channelID: 'Text Channel ID Here',
-    removeRoleID: 'The role removed from users once verified'
+    onFail: 'kick or ban'
 });
 
 client.login("token")
@@ -48,6 +59,3 @@ Captcha.on('failure', (info) => {
 
 # Github
 https://github.com/strange-glitch/djs.captcha
-
-# Discord Server
-https://discord.gg/UNJmsEXu65
