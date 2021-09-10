@@ -12,26 +12,28 @@ class Captcha extends EventEmitter {
 
     client.on('ready', async () => {
       console.log('> [djs.captcha loaded]')
-      if (!options.channelID) return console.log('\x1b[31mError\x1b[0m You did not provide a channel ID!');
 
-      if (!options.roleID) return console.log('\x1b[31mError\x1b[0m You did not provide a role ID!');
+      if (!options.channelID) return console.log('\x1b[31mError\x1b[0m You did not provide a channel ID! \n Exiting Process...').then(process.exit(1));
 
-      if (!options.onFail) return console.log('\x1b[31mError\x1b[0m You did not provide "kick" or "ban" !');
+      if (!options.roleID) return console.log('\x1b[31mError\x1b[0m You did not provide a role ID! \n Exiting Process...').then(process.exit(1));
+
+      if (!options.onFail) return console.log('\x1b[31mError\x1b[0m You did not provide "kick" or "ban" ! \n Exiting Process...').then(process.exit(1));
 
 
       const Channel = client.channels.cache.find(channel => channel.id === options.channelID);
 
-      if (!Channel) return console.log('\x1b[93mWarning\x1b[0m The channel ' + options.channelID + ' does not exist or I do not have perms to see it.');
+      if (!Channel) return console.log('\x1b[93mWarning\x1b[0m The channel ' + options.channelID + ' does not exist or I do not have perms to see it.\n Exiting Process...').then(process.exit(1));
 
       const Role = Channel.guild.roles.cache.find(role => role.id === options.roleID);
 
-      if (!Role) return console.log('\x1b[93mWarning\x1b[0m The role ' + options.roleID + ' does not exist.');
+      if (!Role) return console.log('\x1b[93mWarning\x1b[0m The role ' + options.roleID + ' does not exist. \n Exiting Process...').then(process.exit(1));
 
       const Messages = await Channel.messages.fetch({
         limit: 100
       });
 
-      if (1 < Messages.size) return console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running.');
+      if (1 < Messages.size) return console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running. \n Exiting Process...').then(process.exit(1));
+
       let e;
       if (options.onFail.toLowerCase() === "ban") {
         e = "banned";
@@ -39,7 +41,7 @@ class Captcha extends EventEmitter {
         e = "kicked";
       }
       if (Messages.first()) {
-        if (!Messages.first().author.bot) return console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running.');
+        if (!Messages.first().author.bot) return console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running. \n Exiting Process...').then(process.exit(1));
       } else {
         Channel.send('', {
           button: {
@@ -55,7 +57,7 @@ class Captcha extends EventEmitter {
             "description": `Press Verify to gain access to the rest of the server! \n ⚠ If you fail, you will be ${e}! ⚠`
           }
         }).catch(err => {
-          console.log("\x1b[31mError\x1b[0m I can not send messages in the verification channel!");
+          console.log("\x1b[31mError\x1b[0m I can not send messages in the verification channel! \n Exiting Process...").then(process.exit(1));
         })
       }
 
