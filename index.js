@@ -11,28 +11,40 @@ class Captcha extends EventEmitter {
     require('discord-buttons')(client);
 
     client.on('ready', async () => {
-      console.log('> [djs.captcha loaded]')
+            console.log('> [djs.captcha loaded]')
+      if (!options.channelID) {
+        console.log('\x1b[31mError\x1b[0m You did not provide a channel ID!')
+        process.exit(1)
+      }
+      if (!options.roleID) {
+         console.log('\x1b[31mError\x1b[0m You did not provide a role ID!');
+        process.exit(1)
+      }
 
-      if (!options.channelID) return console.log('\x1b[31mError\x1b[0m You did not provide a channel ID! \n Exiting Process...').then(process.exit(1));
-
-      if (!options.roleID) return console.log('\x1b[31mError\x1b[0m You did not provide a role ID! \n Exiting Process...').then(process.exit(1));
-
-      if (!options.onFail) return console.log('\x1b[31mError\x1b[0m You did not provide "kick" or "ban" ! \n Exiting Process...').then(process.exit(1));
-
+      if (!options.onFail) {
+        console.log('\x1b[31mError\x1b[0m You did not provide "kick" or "ban" for onFail option!')
+        process.exit(1)
+      }
 
       const Channel = client.channels.cache.find(channel => channel.id === options.channelID);
-
-      if (!Channel) return console.log('\x1b[93mWarning\x1b[0m The channel ' + options.channelID + ' does not exist or I do not have perms to see it.\n Exiting Process...').then(process.exit(1));
-
+      if (!Channel) {
+        console.log('\x1b[93mWarning\x1b[0m The channel ' + options.channelID + ' does not exist or I do not have permissions to see it.')
+         process.exit(1)
+      }
       const Role = Channel.guild.roles.cache.find(role => role.id === options.roleID);
 
-      if (!Role) return console.log('\x1b[93mWarning\x1b[0m The role ' + options.roleID + ' does not exist. \n Exiting Process...').then(process.exit(1));
-
+      if (!Role) {
+      console.log('\x1b[93mWarning\x1b[0m The role ' + options.roleID + ' does not exist.')
+       process.exit(1)
+      }
       const Messages = await Channel.messages.fetch({
         limit: 100
       });
 
-      if (1 < Messages.size) return console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running. \n Exiting Process...').then(process.exit(1));
+      if (1 < Messages.size) {
+        console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running.')
+         process.exit(1)
+      } 
 
       let e;
       if (options.onFail.toLowerCase() === "ban") {
@@ -41,7 +53,10 @@ class Captcha extends EventEmitter {
         e = "kicked";
       }
       if (Messages.first()) {
-        if (!Messages.first().author.bot) return console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running. \n Exiting Process...').then(process.exit(1));
+        if (!Messages.first().author.bot) { 
+          console.log('\x1b[93mWarning\x1b[0m There are messages in the channel. Please delete them before running.')
+                 process.exit(1)
+                 }
       } else {
         Channel.send('', {
           button: {
@@ -57,7 +72,8 @@ class Captcha extends EventEmitter {
             "description": `Press Verify to gain access to the rest of the server! \n ⚠ If you fail, you will be ${e}! ⚠`
           }
         }).catch(err => {
-          console.log("\x1b[31mError\x1b[0m I can not send messages in the verification channel! \n Exiting Process...").then(process.exit(1));
+          console.log("\x1b[31mError\x1b[0m I can not send messages in the verification channel!")
+                   process.exit(1)
         })
       }
 
@@ -78,8 +94,6 @@ class Captcha extends EventEmitter {
       function falied(info) {
         Emit.emit('failure', info)
       }
-
-
       client.on('clickButton', async (button) => {
 
         if (button.id === 'Verify_Button') {
@@ -93,6 +107,7 @@ class Captcha extends EventEmitter {
               content: "You failed the captcha!",
               ephemeral: true
             })
+
             let embed;
             if (options.onFail.toLowerCase() === "ban") {
               embed = new MessageEmbed()
@@ -134,7 +149,7 @@ class Captcha extends EventEmitter {
 
                   if (!button.clicker.member.manageable) {
                     console.log('\x1b[93mWarning\x1b[0m I do not have permission to give users the verified role.')
-                    return button.reply.edit(`I dont not have permission to give you <@&${options.roleID}>`, true)
+                   return button.reply.edit(`I dont not have permission to give you <@&${options.roleID}>`, true)
                   }
                   button.clicker.member.roles.add(options.roleID).catch(err => { })
                   button.reply.edit(`You have been verified in ${button.guild.name}`, true);
@@ -142,9 +157,9 @@ class Captcha extends EventEmitter {
                 } else {
                   let o;
                   if (options.onFail.toLowerCase() === "ban") {
-                    o = ban
+                    o = "ban";
                   } else if (options.onFail.toLowerCase() === "kick") {
-                    o = kick
+                    o = "kick";
                   }
                   button.clicker.member.send(`You were ${e} for failing the captcha!`)
                   button.clicker.member.o({ reason: "Failed Captcha" })
